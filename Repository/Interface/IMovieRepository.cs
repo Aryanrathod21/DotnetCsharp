@@ -7,4 +7,6 @@ public interface IMovieRepository
     Task<Movie?> GetMovieById(int id);
 
     Task<List<Movie>> GetAllMovies();
+
+    Task<Movie> AddMovieAsync(Movie movie);
 }

@@ -14,6 +14,14 @@ public class MovieRepository : IMovieRepository
         _context = context;
     }
 
+    public async Task<Movie> AddMovieAsync(Movie movie)
+    {
+        _context.Movies.Add(movie);
+        await _context.SaveChangesAsync();
+        return movie;
+    }
+
+
     public async Task<List<Movie>> GetAllMovies()
     {
         return await _context.Movies.ToListAsync();

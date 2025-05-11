@@ -1,7 +1,6 @@
 @model List<Repository.Models.Movie>
 
 <div class="row table-responsive content-div p-2 my-5 rounded-2">
-
     @if (Model == null || !Model.Any())
     {
         <table class="table table-hover">
@@ -19,6 +18,7 @@
                     <th scope="col">Release Year</th>
                     <th scope="col">BoxOffice Collection</th>
                     <th scope="col">IMDB Rating</th>
+                    <th scope="col">Action</th>
                 </tr>
             </thead>
             <tbody>
@@ -30,11 +30,15 @@
                         <td>@movies.ReleaseYear</td>
                         <td>@movies.BoxOfficeCollection</td>
                         <td>@movies.ImdbRating</td>
+                        <td>
+                            <div class="d-flex">
+                                <a href="#" class="mx-2 pe-auto">Edit</a>
+                                <a href="#" class="pe-auto">Delete</a>
+                            </div>
+                        </td>
                     </tr>
                 }
             </tbody>
         </table>
     }
-
-
 </div>
