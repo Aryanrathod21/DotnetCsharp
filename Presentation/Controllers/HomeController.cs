@@ -3,6 +3,7 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using Presentation.Models;
 using Repository.Models;
+using Repository.ViewModels;
 using Services.Interface;
 
 namespace Presentation.Controllers;
@@ -28,6 +29,38 @@ public class HomeController : Controller
     {
         List<Movie> movies = await _movieService.GetAllMovies();
         return PartialView("_MovieListPartialView", movies);
+    }
+
+    [HttpGet]
+    public IActionResult AddNewMovie()
+    {
+        return PartialView("_AddMoviePartialView");
+    }
+
+    [HttpPost]
+    public async Task<IActionResult> AddNewMovie(CrudMovieViewModel model)
+    {
+        if (!ModelState.IsValid)
+        {
+            // Collect all validation errors
+            var errors = ModelState.Values
+                                   .SelectMany(v => v.Errors)
+                                   .Select(e => e.ErrorMessage)
+                                   .ToArray();
+            return Json(new { success = false, message = string.Join(" ", errors) });
+        }
+
+        var result = await _movieService.AddMovieAsync(model);
+        if (result.Success)
+        {
+            // Return JSON indicating success
+            return Json(new { success = true, message = "Movie Added Successfully" });
+        }
+        else
+        {
+            // Return JSON with the error message from your service
+            return Json(new { success = false, message = result.Message });
+        }
     }
 
     public IActionResult Privacy()

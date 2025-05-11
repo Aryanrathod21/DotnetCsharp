@@ -15,4 +15,8 @@ public class CrudMovieViewModel
 
     [Required(ErrorMessage = "ImdbRating is Required")]
     public decimal ImdbRating { get; set; }
+
+    public DateTime? CreatedAt { get; set; }
+
+    public DateTime? UpdatedAt { get; set; }
 }

@@ -2,17 +2,42 @@
     ViewData["Title"] = "Home Page";
 }
 
+<link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.css">
+<script src="~/lib/jquery/dist/jquery.min.js"></script>
+<script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
+<script src="//cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/microsoft-signalr/8.0.0/signalr.min.js"></script>
+
 <div class="">
     <div class="row">
         <div class="d-flex justify-content-between align-items-center">
             <div class="fs-4 page-text fw-bold">Movies</div>
             <div>
-                <Button type="button" class="btn-main text-white p-3 rounded rounded-3">+ Add Movie</Button>
+                <Button type="button" class="btn-main text-white p-3 rounded rounded-3" data-bs-toggle="modal"
+                    data-bs-target="#AddMovieModal">+ Add Movie</Button>
             </div>
         </div>
     </div>
     <div id="GetMovies">
         @* _MovieListPartialView *@
+    </div>
+</div>
+
+<div class="modal fade" id="AddMovieModal" tabindex="-1" aria-labelledby="AddMovieModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h1 class="modal-title fs-5" id="AddMovieModalLabel">Modal title</h1>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body" id="GetAddMovie">
+
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                <button type="submit" form="addMovieForm" class="btn btn-primary">Add</button>
+            </div>
+        </div>
     </div>
 </div>
 
@@ -34,7 +59,63 @@
                 });
             }
 
+            function loadAddMovie() {
+                $.ajax({
+                    url: '@Url.Action("AddNewMovie", "Home")',
+                    type: 'Get',
+                    success: function (result) {
+                        $("#GetAddMovie").html(result);
+                        $.validator.unobtrusive.parse("#addMovieForm");
+                    },
+                    error: function (xhr, status, error) {
+                        console.error("error Loading the  Add Movies:", error);
+                    }
+                });
+            }
+
+            $(document).on("submit", "#addMovieForm", function (e) {
+                e.preventDefault();
+                var $form = $(this);
+                if ($form.data("submitting")) { return; }
+                $form.data("submitting", true);
+                if (!$form.valid()) { $form.data("submitting", false); return; }
+                var formData = $form.serialize();
+                $.ajax({
+                    url: '@Url.Action("AddNewMovie", "Home")',
+                    type: "POST",
+                    data: formData,
+                    success: function (response) {
+                        if (response.success) {
+                            $(".modal").hide();
+                            $(".modal-backdrop").remove();
+                            toastr.success("Movie added successfully!");
+                            loadMovies();
+                            loadAddMovie();
+                        } else {
+                            toastr.error("Failed to add Movie: " + response.message);
+                            var modalEl = document.getElementById("AddMovieModal");
+                            if (modalEl) {
+                                var modal = bootstrap.Modal.getInstance(modalEl) || new bootstrap.Modal(modalEl);
+                                modal.show();
+                            }
+                        }
+                        $form.data("submitting", false);
+                    },
+                    error: function (xhr, status, error) {
+                        console.error("Error adding Movie:", error);
+                        toastr.error("Error adding Movie. Please try again.");
+                        var modalEl = document.getElementById("AddMovieModal");
+                        if (modalEl) {
+                            var modal = bootstrap.Modal.getInstance(modalEl) || new bootstrap.Modal(modalEl);
+                            modal.show();
+                        }
+                        $form.data("submitting", false);
+                    }
+                });
+            });
+
             loadMovies();
+            loadAddMovie();
 
         });
     </script>

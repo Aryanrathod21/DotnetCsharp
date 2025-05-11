@@ -1,0 +1,36 @@
+@model Repository.ViewModels.CrudMovieViewModel
+<form id="addMovieForm">
+    <div class="row">
+        <div class="form-floating mb-3">
+            <input type="text" class="form-control" id="floatingInput" placeholder="name@example.com" asp-for="Name">
+            <label for="floatingInput">MovieName</label>
+        </div>
+        <span asp-validation-for="Name" class="text-danger"></span>
+    </div>
+    <div class="row">
+        <div class="col-6">
+            <div class="form-floating mb-3">
+                <input type="number" class="form-control" id="floatingInput" placeholder="name@example.com"
+                    asp-for="ReleaseYear">
+                <label for="floatingInput">Release Year</label>
+            </div>
+            <span asp-validation-for="ReleaseYear" class="text-danger"></span>
+        </div>
+        <div class="col-6">
+            <div class="form-floating mb-3">
+                <input type="number" class="form-control" id="floatingInput" placeholder="name@example.com"
+                    asp-for="ImdbRating">
+                <label for="floatingInput">IMDB Rating</label>
+            </div>
+            <span asp-validation-for="ImdbRating" class="text-danger"></span>
+        </div>
+    </div>
+    <div class="row">
+        <div class="form-floating mb-3">
+            <input type="text" class="form-control" id="floatingInput" placeholder="name@example.com"
+                asp-for="BoxOfficeCollection">
+            <label for="floatingInput">Box Office Collection</label>
+        </div>
+        <span asp-validation-for="BoxOfficeCollection" class="text-danger"></span>
+    </div>
+</form>

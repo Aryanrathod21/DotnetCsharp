@@ -14,4 +14,10 @@ public partial class Movie
     public string BoxOfficeCollection { get; set; } = null!;
 
     public decimal ImdbRating { get; set; }
+
+    public bool? IsDelete { get; set; }
+
+    public DateTime? CreatedAt { get; set; }
+
+    public DateTime? UpdatedAt { get; set; }
 }

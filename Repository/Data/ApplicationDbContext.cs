@@ -26,11 +26,11 @@ public partial class ApplicationDbContext : DbContext
     {
         modelBuilder.Entity<Movie>(entity =>
         {
-            entity.HasNoKey();
+            entity.HasKey(e => e.Id).HasName("Movies_pkey");
 
             entity.Property(e => e.BoxOfficeCollection).HasColumnType("character varying");
-            entity.Property(e => e.Id).ValueGeneratedOnAdd();
             entity.Property(e => e.ImdbRating).HasPrecision(3, 2);
+            entity.Property(e => e.IsDelete).HasDefaultValueSql("false");
             entity.Property(e => e.Name).HasMaxLength(50);
         });
 
