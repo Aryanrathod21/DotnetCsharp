@@ -1,6 +1,9 @@
 ﻿using System.Diagnostics;
+using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using Presentation.Models;
+using Repository.Models;
+using Services.Interface;
 
 namespace Presentation.Controllers;
 
@@ -8,9 +11,12 @@ public class HomeController : Controller
 {
     private readonly ILogger<HomeController> _logger;
 
-    public HomeController(ILogger<HomeController> logger)
+    private readonly IMovieService _movieService;
+
+    public HomeController(ILogger<HomeController> logger, IMovieService movieService)
     {
         _logger = logger;
+        _movieService = movieService;
     }
 
     public IActionResult Index()
@@ -18,9 +24,10 @@ public class HomeController : Controller
         return View();
     }
 
-    public IActionResult MovieList()
+    public async Task<IActionResult> MovieList()
     {
-        return PartialView("_MovieListPartialView");
+        List<Movie> movies = await _movieService.GetAllMovies();
+        return PartialView("_MovieListPartialView", movies);
     }
 
     public IActionResult Privacy()

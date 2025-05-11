@@ -1,22 +1,40 @@
+@model List<Repository.Models.Movie>
+
 <div class="row table-responsive content-div p-2 my-5 rounded-2">
-    <table class="table table-hover">
-        <thead>
-            <tr>
-                <th scope="col" class="Movie-id">#</th>
-                <th scope="col" class="name">Movie Name</th>
-                <th scope="col">Release Year</th>
-                <th scope="col">BoxOffice Collection</th>
-                <th scope="col">IMDB Rating</th>
-            </tr>
-        </thead>
-        <tbody>
-            <tr>
-                <th scope="row">1</th>
-                <td>The Shawshank Redemption</td>
-                <td>1994</td>
-                <td>$73 Million</td>
-                <td>9.3</td>
-            </tr>
-        </tbody>
-    </table>
+
+    @if (Model == null || !Model.Any())
+    {
+        <table class="table table-hover">
+            <p>No sections available.</p>
+        </table>
+    }
+
+    else
+    {
+        <table class="table table-hover">
+            <thead>
+                <tr>
+                    <th scope="col" class="Movie-id">#</th>
+                    <th scope="col" class="name">Movie Name</th>
+                    <th scope="col">Release Year</th>
+                    <th scope="col">BoxOffice Collection</th>
+                    <th scope="col">IMDB Rating</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var movies in Model)
+                {
+                    <tr>
+                        <th scope="row">@movies.Id</th>
+                        <td>@movies.Name</td>
+                        <td>@movies.ReleaseYear</td>
+                        <td>@movies.BoxOfficeCollection</td>
+                        <td>@movies.ImdbRating</td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    }
+
+
 </div>
