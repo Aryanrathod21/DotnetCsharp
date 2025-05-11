@@ -1,6 +1,7 @@
 @model List<Repository.Models.Movie>
 
-<div class="row table-responsive content-div p-2 my-5 rounded-2">
+<div class="row table-responsive content-div p-2 my-5 rounded-2 custom-scrollbar"
+    style="max-height: 400px; overflow-y: auto; overflow-x: hidden;">
     @if (Model == null || !Model.Any())
     {
         <table class="table table-hover">
@@ -21,24 +22,26 @@
                     <th scope="col">Action</th>
                 </tr>
             </thead>
-            <tbody>
-                @foreach (var movies in Model)
-                {
-                    <tr>
-                        <th scope="row">@movies.Id</th>
-                        <td>@movies.Name</td>
-                        <td>@movies.ReleaseYear</td>
-                        <td>@movies.BoxOfficeCollection</td>
-                        <td>@movies.ImdbRating</td>
-                        <td>
-                            <div class="d-flex">
-                                <a href="#" class="mx-2 pe-auto">Edit</a>
-                                <a href="#" class="pe-auto">Delete</a>
-                            </div>
-                        </td>
-                    </tr>
-                }
-            </tbody>
+            <div>
+                <tbody>
+                    @foreach (var movies in Model)
+                    {
+                        <tr>
+                            <th scope="row">@movies.Id</th>
+                            <td>@movies.Name</td>
+                            <td>@movies.ReleaseYear</td>
+                            <td>@movies.BoxOfficeCollection</td>
+                            <td>@movies.ImdbRating</td>
+                            <td>
+                                <div class="d-flex">
+                                    <a href="#" class="mx-2 pe-auto">Edit</a>
+                                    <a href="#" class="pe-auto">Delete</a>
+                                </div>
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </div>
         </table>
     }
 </div>
