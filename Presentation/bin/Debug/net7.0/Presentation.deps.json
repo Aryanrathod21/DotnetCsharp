@@ -881,6 +881,10 @@
         }
       },
       "Repository/1.0.0": {
+        "dependencies": {
+          "Npgsql.EntityFrameworkCore.PostgreSQL": "7.0.18",
+          "Npgsql.EntityFrameworkCore.PostgreSQL.Design": "1.1.0"
+        },
         "runtime": {
           "Repository.dll": {}
         }

@@ -18,6 +18,11 @@ public class HomeController : Controller
         return View();
     }
 
+    public IActionResult MovieList()
+    {
+        return PartialView("_MovieListPartialView");
+    }
+
     public IActionResult Privacy()
     {
         return View();
