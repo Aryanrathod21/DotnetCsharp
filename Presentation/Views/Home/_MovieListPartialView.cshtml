@@ -1,5 +1,19 @@
 @model Repository.ViewModels.PaginatedListViewModel<Repository.Models.Movie>
 
+@{
+    Func<decimal, string> GetRatingRange = rating =>
+    {
+        if (rating >= 9.0m)
+        {
+            return "9-10";
+        }
+        else
+        {
+            int low = (int)Math.Floor(rating);
+            return $"{low}-{low + 1}";
+        }
+    };
+}
 <div class="row table-responsive content-div p-2 my-5 rounded-2 custom-scrollbar"
     style="max-height: 400px; overflow-y: auto; overflow-x: hidden;">
     @if (Model.Items == null || !Model.Items.Any())
@@ -27,7 +41,7 @@
                         <td>@movie.Name</td>
                         <td>@movie.ReleaseYear</td>
                         <td>@movie.BoxOfficeCollection</td>
-                        <td>@movie.ImdbRating</td>
+                        <td>@GetRatingRange(movie.ImdbRating)</td>
                         <td>
                             <div class="d-flex">
                                 <a href="#" class="mx-2 pe-auto" data-movies-id="@movie.Id" data-bs-toggle="modal"
