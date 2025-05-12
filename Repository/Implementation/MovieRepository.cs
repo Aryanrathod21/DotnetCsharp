@@ -28,7 +28,7 @@ public class MovieRepository : IMovieRepository
 
     public async Task<List<Movie>> GetAllMovies()
     {
-        return await _context.Movies.ToListAsync();
+        return await _context.Movies.OrderBy(m => m.Id).Where(m => m.IsDeleted == false).ToListAsync();
     }
 
 

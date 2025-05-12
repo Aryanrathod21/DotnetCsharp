@@ -15,4 +15,6 @@ public interface IMovieService
 
     Task<(bool Success, string Message)> EditMovieAsync(CrudMovieViewModel model);
 
+    Task<(bool Success, string Message)> SoftDeleteMovieAsync(int id);
+
 }

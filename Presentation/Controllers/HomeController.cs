@@ -94,6 +94,20 @@ public class HomeController : Controller
         }
     }
 
+    [HttpPost]
+    public async Task<IActionResult> DeleteMovie(int id)
+    {
+        var result = await _movieService.SoftDeleteMovieAsync(id);
+        if (result.Success)
+        {
+            return Json(new { success = true, message = "Movie Deleted Successfully" });
+        }
+        else
+        {
+            return Json(new { success = false, message = result.Message });
+        }
+    }
+
 
     public IActionResult Privacy()
     {

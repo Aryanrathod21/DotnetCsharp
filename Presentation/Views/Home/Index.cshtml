@@ -59,6 +59,27 @@
     </div>
 </div>
 
+<div class="modal fade" id="deleteMovieModal" tabindex="-1" aria-labelledby="deleteMovieModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h1 class="modal-title fs-5" id="deleteMovieModalLabel">Modal title</h1>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <form id="deleteMovieForm">
+                <input type="hidden" name="id" id="delete-movie-id" />
+                <div class="modal-body" id="GetdeleteMovie">
+                    <div>Are You Sure You Want to Delete This Movie?</div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                    <button type="submit" class="btn btn-primary">Yes</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
 @section Scripts {
     <script>
 
@@ -183,6 +204,54 @@
                         console.error("Error editing Movie:", error);
                         toastr.error("Error editing Movie. Please try again.");
                         var modalEl = document.getElementById("EditMovieModal");
+                        if (modalEl) {
+                            var modal = bootstrap.Modal.getInstance(modalEl) || new bootstrap.Modal(modalEl);
+                            modal.show();
+                        }
+                        $form.data("submitting", false);
+                    }
+                });
+            });
+
+            $('#deleteMovieModal').on('show.bs.modal', function (e) {
+                var button = $(e.relatedTarget);
+                var movieId = button.data('movies-id');
+                $(this).find('#delete-movie-id').val(movieId);
+            });
+
+
+            //PostDeleteModal
+            $(document).on("submit", "#deleteMovieForm", function (e) {
+                e.preventDefault();
+                var $form = $(this);
+                if ($form.data("submitting")) { return; }
+                $form.data("submitting", true);
+                if (!$form.valid()) { $form.data("submitting", false); return; }
+                var formData = $form.serialize();
+                $.ajax({
+                    url: '@Url.Action("DeleteMovie", "Home")',
+                    type: "POST",
+                    data: formData,
+                    success: function (response) {
+                        if (response.success) {
+                            $(".modal").hide();
+                            $(".modal-backdrop").remove();
+                            toastr.success("Movie Deleted successfully!");
+                            loadMovies();
+                        } else {
+                            toastr.error("Failed to Delete Movie: " + response.message);
+                            var modalEl = document.getElementById("deleteMovieModal");
+                            if (modalEl) {
+                                var modal = bootstrap.Modal.getInstance(modalEl) || new bootstrap.Modal(modalEl);
+                                modal.show();
+                            }
+                        }
+                        $form.data("submitting", false);
+                    },
+                    error: function (xhr, status, error) {
+                        console.error("Error deleting Movie:", error);
+                        toastr.error("Error deleting Movie. Please try again.");
+                        var modalEl = document.getElementById("deleteMovieModal");
                         if (modalEl) {
                             var modal = bootstrap.Modal.getInstance(modalEl) || new bootstrap.Modal(modalEl);
                             modal.show();

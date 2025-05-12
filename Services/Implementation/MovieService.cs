@@ -109,6 +109,20 @@ public class MovieService : IMovieService
         }
     }
 
+
+    public async Task<(bool Success, string Message)> SoftDeleteMovieAsync(int id)
+    {
+        var movie = await _movieRepository.GetMovieById(id);
+        if (movie == null)
+        {
+            return (false, "Movie Not Found");
+        }
+
+        movie.IsDeleted = true;
+        await _movieRepository.EditMovieAsync(movie);
+        return (true, "Movie Deleted Successfully");
+    }
+
     public async Task<Movie?> GetMoviesById(int id)
     {
         return await _movieRepository.GetMovieById(id);
