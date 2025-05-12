@@ -10,4 +10,9 @@ public interface IMovieService
     Task<List<Movie>> GetAllMovies();
 
     Task<(bool Success, string Message)> AddMovieAsync(CrudMovieViewModel model);
+
+    Task<CrudMovieViewModel?> GetMovieForEdit(int id);
+
+    Task<(bool Success, string Message)> EditMovieAsync(CrudMovieViewModel model);
+
 }

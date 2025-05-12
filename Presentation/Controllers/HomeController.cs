@@ -42,7 +42,6 @@ public class HomeController : Controller
     {
         if (!ModelState.IsValid)
         {
-            // Collect all validation errors
             var errors = ModelState.Values
                                    .SelectMany(v => v.Errors)
                                    .Select(e => e.ErrorMessage)
@@ -53,15 +52,48 @@ public class HomeController : Controller
         var result = await _movieService.AddMovieAsync(model);
         if (result.Success)
         {
-            // Return JSON indicating success
             return Json(new { success = true, message = "Movie Added Successfully" });
         }
         else
         {
-            // Return JSON with the error message from your service
             return Json(new { success = false, message = result.Message });
         }
     }
+
+    [HttpGet]
+    public async Task<IActionResult> EditMovie(int id)
+    {
+        var model = await _movieService.GetMovieForEdit(id);
+        if (model == null)
+        {
+            return NotFound("Movie Not Found");
+        }
+        return PartialView("_EditMoviePartialView", model);
+    }
+
+    [HttpPost]
+    public async Task<IActionResult> UpdateMovie(CrudMovieViewModel model)
+    {
+        if (!ModelState.IsValid)
+        {
+            var errors = ModelState.Values
+                                   .SelectMany(v => v.Errors)
+                                   .Select(e => e.ErrorMessage)
+                                   .ToArray();
+            return Json(new { success = false, message = string.Join(" ", errors) });
+        }
+
+        var result = await _movieService.EditMovieAsync(model);
+        if (result.Success)
+        {
+            return Json(new { success = true, message = "Movie Edited Successfully" });
+        }
+        else
+        {
+            return Json(new { success = false, message = result.Message });
+        }
+    }
+
 
     public IActionResult Privacy()
     {

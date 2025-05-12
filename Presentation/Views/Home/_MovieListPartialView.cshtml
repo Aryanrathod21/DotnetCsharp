@@ -34,8 +34,9 @@
                             <td>@movies.ImdbRating</td>
                             <td>
                                 <div class="d-flex">
-                                    <a href="#" class="mx-2 pe-auto">Edit</a>
-                                    <a href="#" class="pe-auto">Delete</a>
+                                    <a href="#" class="mx-2 pe-auto" data-movies-id="@movies.Id" data-bs-toggle="modal"
+                                        data-bs-target="#EditMovieModal">Edit</a>
+                                    <a href="#" class="pe-auto" data-movies-id="@movies.Id">Delete</a>
                                 </div>
                             </td>
                         </tr>

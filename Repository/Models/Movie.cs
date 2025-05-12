@@ -15,7 +15,7 @@ public partial class Movie
 
     public decimal ImdbRating { get; set; }
 
-    public bool? IsDelete { get; set; }
+    public bool? IsDeleted { get; set; }
 
     public DateTime? CreatedAt { get; set; }
 

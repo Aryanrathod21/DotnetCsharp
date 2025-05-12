@@ -31,11 +31,29 @@
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
             <div class="modal-body" id="GetAddMovie">
-
+                @* _AddMoviePartialView *@
             </div>
             <div class="modal-footer">
                 <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
                 <button type="submit" form="addMovieForm" class="btn btn-primary">Add</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="modal fade" id="EditMovieModal" tabindex="-1" aria-labelledby="EditMovieModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h1 class="modal-title fs-5" id="EditMovieModalLabel">Modal title</h1>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body" id="GetEditMovie">
+                @* _EditMoviePartialView *@
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                <button type="submit" form="editMovieForm" class="btn btn-primary">Edit</button>
             </div>
         </div>
     </div>
@@ -114,9 +132,68 @@
                 });
             });
 
+            //loadEditModal
+            $('#EditMovieModal').on('show.bs.modal', function (event) {
+                var button = $(event.relatedTarget);
+                var movieId = button.data('movies-id');
+                var modal = $(this);
+                $.ajax({
+                    url: '@Url.Action("EditMovie", "Home")/' + movieId,
+                    type: 'GET',
+                    success: function (result) {
+                        modal.find('#GetEditMovie').html(result);
+                        $.validator.unobtrusive.parse("#editMovieForm");
+                    },
+                    error: function (xhr, status, error) {
+                        console.error("error loading the edit Movie Modal", error);
+                        toastr.error("Failed to load edit form.");
+                    }
+                });
+            });
+
+            //PostEditModal
+            $(document).on("submit", "#editMovieForm", function (e) {
+                e.preventDefault();
+                var $form = $(this);
+                if ($form.data("submitting")) { return; }
+                $form.data("submitting", true);
+                if (!$form.valid()) { $form.data("submitting", false); return; }
+                var formData = $form.serialize();
+                $.ajax({
+                    url: '@Url.Action("UpdateMovie", "Home")',
+                    type: "POST",
+                    data: formData,
+                    success: function (response) {
+                        if (response.success) {
+                            $(".modal").hide();
+                            $(".modal-backdrop").remove();
+                            toastr.success("Movie Edited successfully!");
+                            loadMovies();
+                        } else {
+                            toastr.error("Failed to Edit Movie: " + response.message);
+                            var modalEl = document.getElementById("EditMovieModal");
+                            if (modalEl) {
+                                var modal = bootstrap.Modal.getInstance(modalEl) || new bootstrap.Modal(modalEl);
+                                modal.show();
+                            }
+                        }
+                        $form.data("submitting", false);
+                    },
+                    error: function (xhr, status, error) {
+                        console.error("Error editing Movie:", error);
+                        toastr.error("Error editing Movie. Please try again.");
+                        var modalEl = document.getElementById("EditMovieModal");
+                        if (modalEl) {
+                            var modal = bootstrap.Modal.getInstance(modalEl) || new bootstrap.Modal(modalEl);
+                            modal.show();
+                        }
+                        $form.data("submitting", false);
+                    }
+                });
+            });
+
             loadMovies();
             loadAddMovie();
-
         });
     </script>
 }

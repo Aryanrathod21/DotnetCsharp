@@ -54,11 +54,66 @@ public class MovieService : IMovieService
         return await _movieRepository.GetAllMovies();
     }
 
+    public async Task<CrudMovieViewModel?> GetMovieForEdit(int id)
+    {
+        var movie = await _movieRepository.GetMovieById(id);
+        if (movie == null)
+        {
+            return null;
+        }
+        return new CrudMovieViewModel
+        {
+            Name = movie.Name,
+            ReleaseYear = movie.ReleaseYear,
+            BoxOfficeCollection = movie.BoxOfficeCollection,
+            ImdbRating = movie.ImdbRating
+        };
+    }
+
+
+    public async Task<(bool Success, string Message)> EditMovieAsync(CrudMovieViewModel model)
+    {
+        var originalname = model.Name?.Trim();
+        if (string.IsNullOrEmpty(originalname))
+        {
+            return (false, "Movie name cannot be empty.");
+        }
+
+        var normalizedname = originalname.Trim().ToLowerInvariant();
+        var existingmovie = await _movieRepository.GetAllMovies();
+        if (existingmovie.Any(m => m.Name?.Trim().ToLowerInvariant() == normalizedname && m.Id != model.Id))
+        {
+            return (false, "Movie Already Exists.");
+        }
+
+        var movie = await _movieRepository.GetMovieById(model.Id);
+        // if (movie == null)
+        // {
+        //     return (false, "Movie Not Found");
+        // }
+
+        movie.Name = model.Name;
+        movie.ReleaseYear = model.ReleaseYear;
+        movie.ImdbRating = model.ImdbRating;
+        movie.BoxOfficeCollection = model.BoxOfficeCollection;
+        movie.UpdatedAt = DateTime.UtcNow;
+
+        try
+        {
+            await _movieRepository.EditMovieAsync(movie);
+            return (true, "Movie Edited SuccessFully");
+        }
+        catch (Exception ex)
+        {
+            return (false, "Failed to Edit Movie");
+        }
+    }
 
     public async Task<Movie?> GetMoviesById(int id)
     {
         return await _movieRepository.GetMovieById(id);
     }
+
 
 
 }

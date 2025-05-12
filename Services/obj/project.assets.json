@@ -5662,19 +5662,19 @@
     ]
   },
   "packageFolders": {
-    "C:\\Users\\aryan\\.nuget\\packages\\": {}
+    "C:\\Users\\pce28\\.nuget\\packages\\": {}
   },
   "project": {
     "version": "1.0.0",
     "restore": {
-      "projectUniqueName": "D:\\TestPrac\\Services\\Services.csproj",
+      "projectUniqueName": "D:\\TestCrud\\DotnetCsharp\\Services\\Services.csproj",
       "projectName": "Services",
-      "projectPath": "D:\\TestPrac\\Services\\Services.csproj",
-      "packagesPath": "C:\\Users\\aryan\\.nuget\\packages\\",
-      "outputPath": "D:\\TestPrac\\Services\\obj\\",
+      "projectPath": "D:\\TestCrud\\DotnetCsharp\\Services\\Services.csproj",
+      "packagesPath": "C:\\Users\\pce28\\.nuget\\packages\\",
+      "outputPath": "D:\\TestCrud\\DotnetCsharp\\Services\\obj\\",
       "projectStyle": "PackageReference",
       "configFilePaths": [
-        "C:\\Users\\aryan\\AppData\\Roaming\\NuGet\\NuGet.Config"
+        "C:\\Users\\pce28\\AppData\\Roaming\\NuGet\\NuGet.Config"
       ],
       "originalTargetFrameworks": [
         "net7.0"
@@ -5686,8 +5686,8 @@
         "net7.0": {
           "targetAlias": "net7.0",
           "projectReferences": {
-            "D:\\TestPrac\\Repository\\Repository.csproj": {
-              "projectPath": "D:\\TestPrac\\Repository\\Repository.csproj"
+            "D:\\TestCrud\\DotnetCsharp\\Repository\\Repository.csproj": {
+              "projectPath": "D:\\TestCrud\\DotnetCsharp\\Repository\\Repository.csproj"
             }
           }
         }
