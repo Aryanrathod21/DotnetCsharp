@@ -1,14 +1,11 @@
-@model List<Repository.Models.Movie>
+@model Repository.ViewModels.PaginatedListViewModel<Repository.Models.Movie>
 
 <div class="row table-responsive content-div p-2 my-5 rounded-2 custom-scrollbar"
     style="max-height: 400px; overflow-y: auto; overflow-x: hidden;">
-    @if (Model == null || !Model.Any())
+    @if (Model.Items == null || !Model.Items.Any())
     {
-        <table class="table table-hover">
-            <p>No sections available.</p>
-        </table>
+        <p>No movies available.</p>
     }
-
     else
     {
         <table class="table table-hover">
@@ -22,28 +19,67 @@
                     <th scope="col">Action</th>
                 </tr>
             </thead>
-            <div>
-                <tbody>
-                    @foreach (var movies in Model)
-                    {
-                        <tr>
-                            <th scope="row">@movies.Id</th>
-                            <td>@movies.Name</td>
-                            <td>@movies.ReleaseYear</td>
-                            <td>@movies.BoxOfficeCollection</td>
-                            <td>@movies.ImdbRating</td>
-                            <td>
-                                <div class="d-flex">
-                                    <a href="#" class="mx-2 pe-auto" data-movies-id="@movies.Id" data-bs-toggle="modal"
-                                        data-bs-target="#EditMovieModal">Edit</a>
-                                    <a href="#" class="pe-auto" data-movies-id="@movies.Id" data-bs-toggle="modal"
-                                        data-bs-target="#deleteMovieModal">Delete</a>
-                                </div>
-                            </td>
-                        </tr>
-                    }
-                </tbody>
-            </div>
+            <tbody>
+                @foreach (var movie in Model.Items)
+                {
+                    <tr>
+                        <th scope="row">@movie.Id</th>
+                        <td>@movie.Name</td>
+                        <td>@movie.ReleaseYear</td>
+                        <td>@movie.BoxOfficeCollection</td>
+                        <td>@movie.ImdbRating</td>
+                        <td>
+                            <div class="d-flex">
+                                <a href="#" class="mx-2 pe-auto" data-movies-id="@movie.Id" data-bs-toggle="modal"
+                                    data-bs-target="#EditMovieModal">Edit</a>
+                                <a href="#" class="pe-auto" data-movies-id="@movie.Id" data-bs-toggle="modal"
+                                    data-bs-target="#deleteMovieModal">Delete</a>
+                            </div>
+                        </td>
+                    </tr>
+                }
+            </tbody>
         </table>
     }
 </div>
+
+<nav aria-label="Page navigation example"
+    class="d-flex align-items-center justify-content-between justify-content-lg-end flex-column flex-md-row">
+    <div class="d-flex me-2 align-items-center mb-4">
+        <p class="m-0 me-1">Items Per Page</p>
+        <div>
+            <button id="pageSizeButton" class="btn btn-outline-secondary dropdown-toggle" type="button"
+                data-bs-toggle="dropdown" aria-expanded="false">
+                @Model.PageSize
+            </button>
+            <ul class="dropdown-menu">
+                @foreach (var size in new int[] { 5, 10, 15, 20, 25 })
+                {
+                    <li>
+                        <a class="dropdown-item pagesize-item" href="#" data-pagesize="@size">@size</a>
+                    </li>
+                }
+            </ul>
+        </div>
+    </div>
+
+    <ul class="pagination d-flex align-items-center mb-4">
+        <!-- Previous Page -->
+        <li class="page-item @(Model.CurrentPage == 1 ? "disabled" : "")">
+            <a class="page-link pagination-link text-decoration-none text-body" href="#"
+                data-page="@(Model.CurrentPage - 1)">&lt;</a>
+        </li>
+        <!-- Page Numbers -->
+        @for (int i = 1; i <= Model.TotalPages; i++)
+        {
+            <li class="page-item @(i == Model.CurrentPage ? "active" : "")">
+                <a class="page-link pagination-link text-decoration-none text-body" href="#" data-page="@i">@i</a>
+            </li>
+        }
+        <!-- Next Page -->
+        <li class="page-item @(Model.CurrentPage == Model.TotalPages ? "disabled" : "")">
+            <a class="page-link pagination-link text-decoration-none text-body" href="#"
+                data-page="@(Model.CurrentPage + 1)">></a>
+        </li>
+    </ul>
+</nav>

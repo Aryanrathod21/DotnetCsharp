@@ -9,6 +9,11 @@
 <script src="https://cdnjs.cloudflare.com/ajax/libs/microsoft-signalr/8.0.0/signalr.min.js"></script>
 
 <div class="">
+    <div class="row my-5">
+        <form class="">
+            <input class="form-control" id="searchInput" type="search" placeholder="Search" aria-label="Search">
+        </form>
+    </div>
     <div class="row">
         <div class="d-flex justify-content-between align-items-center">
             <div class="fs-4 page-text fw-bold">Movies</div>
@@ -85,18 +90,49 @@
 
         $(document).ready(function () {
 
-            function loadMovies() {
+            var currentPage = 1;
+            var currentPageSize = 5;
+
+            function loadMovies(searchString, page, pageSize) {
                 $.ajax({
                     url: '@Url.Action("MovieList", "Home")',
                     type: 'Get',
+                    data: {
+                        searchString: searchString,
+                        page: page,
+                        pageSize: pageSize
+                    },
                     success: function (result) {
                         $("#GetMovies").html(result);
                     },
                     error: function (xhr, status, error) {
-                        console.error("error Loading the Movies:", error);
+                        console.error("Error loading the movies:", error);
                     }
                 });
             }
+
+            // Search trigger
+            $('#searchInput').on('keyup', function () {
+                var searchString = $(this).val();
+                loadMovies(searchString, 1, currentPageSize);
+            });
+
+            // Page size change
+            $(document).on('click', '.pagesize-item', function (e) {
+                e.preventDefault();
+                currentPageSize = $(this).data('pagesize');
+                $('#pageSizeButton').text(currentPageSize);
+                var searchString = $('#searchInput').val();
+                loadMovies(searchString, 1, currentPageSize);
+            });
+
+            // Pagination
+            $(document).on('click', '.pagination-link', function (e) {
+                e.preventDefault();
+                var newPage = $(this).data('page');
+                var searchString = $('#searchInput').val();
+                loadMovies(searchString, newPage, currentPageSize);
+            });
 
             function loadAddMovie() {
                 $.ajax({
@@ -261,7 +297,7 @@
                 });
             });
 
-            loadMovies();
+            loadMovies('', currentPage, currentPageSize);
             loadAddMovie();
         });
     </script>

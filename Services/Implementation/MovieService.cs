@@ -49,9 +49,33 @@ public class MovieService : IMovieService
         }
     }
 
-    public async Task<List<Movie>> GetAllMovies()
+    public async Task<PaginatedListViewModel<Movie>> GetAllMovies(string searchString, int page, int pageSize)
     {
-        return await _movieRepository.GetAllMovies();
+        // return await _movieRepository.GetAllMovies();
+        var movies = await _movieRepository.GetAllMovies();
+
+        if (!string.IsNullOrWhiteSpace(searchString))
+        {
+            movies = movies.Where(m => m.Name.ToLower().Contains(searchString.ToLower())).ToList();
+        }
+
+        int totalItems = movies.Count;
+        int totalPages = (int)Math.Ceiling((double)totalItems / pageSize);
+
+        var paginatedTables = movies
+            .Skip((page - 1) * pageSize)
+            .Take(pageSize)
+            .ToList();
+
+        return new PaginatedListViewModel<Movie>
+        {
+            Items = paginatedTables,
+            TotalItems = totalItems,
+            PageSize = pageSize,
+            CurrentPage = page,
+            TotalPages = totalPages,
+            SearchString = searchString
+        };
     }
 
     public async Task<CrudMovieViewModel?> GetMovieForEdit(int id)
@@ -87,10 +111,10 @@ public class MovieService : IMovieService
         }
 
         var movie = await _movieRepository.GetMovieById(model.Id);
-        // if (movie == null)
-        // {
-        //     return (false, "Movie Not Found");
-        // }
+        if (movie == null)
+        {
+            return (false, "Movie Not Found");
+        }
 
         movie.Name = model.Name;
         movie.ReleaseYear = model.ReleaseYear;

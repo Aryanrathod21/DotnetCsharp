@@ -7,7 +7,7 @@ public interface IMovieService
 {
     Task<Movie?> GetMoviesById(int id);
 
-    Task<List<Movie>> GetAllMovies();
+    Task<PaginatedListViewModel<Movie>> GetAllMovies(string searchString, int page, int pageSize);
 
     Task<(bool Success, string Message)> AddMovieAsync(CrudMovieViewModel model);
 

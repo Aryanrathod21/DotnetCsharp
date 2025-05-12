@@ -25,10 +25,10 @@ public class HomeController : Controller
         return View();
     }
 
-    public async Task<IActionResult> MovieList()
+    public async Task<IActionResult> MovieList(string searchString = " ", int page = 1, int pageSize = 5)
     {
-        List<Movie> movies = await _movieService.GetAllMovies();
-        return PartialView("_MovieListPartialView", movies);
+        var paginatedMovies = await _movieService.GetAllMovies(searchString, page, pageSize);
+        return PartialView("_MovieListPartialView", paginatedMovies);
     }
 
     [HttpGet]
