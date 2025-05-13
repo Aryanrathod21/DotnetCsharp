@@ -11,4 +11,6 @@ public interface IMovieRepository
     Task AddMovieAsync(Movie movie);
 
     Task EditMovieAsync(Movie movie);
+
+    Task<List<Movie>> GetMoviesByPartialNameAsync(string partialName, int limit);
 }

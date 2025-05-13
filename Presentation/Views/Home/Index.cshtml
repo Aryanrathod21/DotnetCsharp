@@ -3,10 +3,17 @@
 }
 
 <link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.css">
-<script src="~/lib/jquery/dist/jquery.min.js"></script>
-@* <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script> *@
-<script src="//cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/microsoft-signalr/8.0.0/signalr.min.js"></script>
+<script src="https://code.jquery.com/jquery-3.1.1.min.js"></script>
+
+<style>
+    .ui-helper-hidden-accessible {
+        display: none !important;
+    }
+
+    div[role="status"] {
+        display: none !important;
+    }
+</style>
 
 <div class="">
     <div class="row my-5">
@@ -20,6 +27,8 @@
             <div>
                 <Button type="button" class="btn-main text-white p-3 rounded rounded-3" data-bs-toggle="modal"
                     data-bs-target="#AddMovieModal">+ Add Movie</Button>
+                <Button type="button" class="btn-main text-white p-3 rounded rounded-3" data-bs-toggle="modal"
+                    data-bs-target="#ExampleMovieModal">Example</Button>
             </div>
         </div>
     </div>
@@ -85,7 +94,28 @@
     </div>
 </div>
 
+<div class="modal fade" id="ExampleMovieModal" tabindex="-1" aria-labelledby="ExampleMovieModalLabel"
+    aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h1 class="modal-title fs-5" id="ExampleMovieModalLabel">Modal title</h1>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body" id="GetExampleMovie">
+                @* _ExampleMoviePartialView *@
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                <button type="submit" class="btn btn-primary">Add</button>
+            </div>
+        </div>
+    </div>
+</div>
+
 @section Scripts {
+    <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.min.js"></script>
+    <script src="//cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.js"></script>
     <script>
 
         $(document).ready(function () {
@@ -297,8 +327,90 @@
                 });
             });
 
+            function loadExampleMovie() {
+                $.ajax({
+                    url: '@Url.Action("Example", "Home")',
+                    type: 'Get',
+                    success: function (result) {
+                        $("#GetExampleMovie").html(result);
+                        $.validator.unobtrusive.parse("#ExampleMovieForm");
+                        if (!$.ui || !$.ui.autocomplete) {
+                            console.error("jQuery UI Autocomplete not loaded");
+                            return;
+                        }
+                        $("#Name").autocomplete({
+                            source: function (request, response) {
+                                $.ajax({
+                                    url: '@Url.Action("GetMovieSuggestions", "Home")',
+                                    type: "GET",
+                                    data: { term: request.term },
+                                    success: function (data) {
+                                        response($.map(data, function (item) {
+                                            return {
+                                                label: item.name, // Displayed in the suggestion list
+                                                value: item.name, // Value to use (will override later)
+                                                id: item.id,
+                                                releaseYear: item.releaseYear,
+                                                imdbRating: item.imdbRating,
+                                                boxOfficeCollection: item.boxOfficeCollection
+                                            };
+                                        }));
+                                    },
+                                    error: function (xhr, status, error) {
+                                        console.error("AJAX error:", error, xhr.status);
+                                    }
+                                });
+                            },
+                            minLength: 2,
+                            select: function (event, ui) {
+                                // Populate form fields only when a suggestion is explicitly selected
+                                $.ajax({
+                                    url: '@Url.Action("GetMovieById", "Home")',
+                                    type: "GET",
+                                    data: { id: ui.item.id },
+                                    success: function (data) {
+                                        $("#Id").val(data.id);
+                                        $("#Name").val(data.name);
+                                        $("#ReleaseYear").val(data.releaseYear);
+                                        $("#ImdbRating").val(data.imdbRating);
+                                        $("#BoxOfficeCollection").val(data.boxOfficeCollection);
+                                    },
+                                    error: function (xhr, status, error) {
+                                        console.error("Error fetching movie data:", error, xhr.status);
+                                        toastr.error("Failed to load movie data.");
+                                    }
+                                });
+                                return false; // Prevent default behavior of setting input value
+                            },
+                            appendTo: "#SuggetionsMovie",
+                            open: function () {
+                                var menu = $(this).data("ui-autocomplete").menu.element;
+                                menu.position({
+                                    my: "left top",       // Align the top-left of the suggestion list
+                                    at: "left top",       // To the top-left of the target element
+                                    of: "#SuggetionsMovie" // Target element is the suggestions div
+                                });
+                            },
+                            // Override to prevent input value from changing during suggestion navigation
+                            focus: function (event, ui) {
+                                return false; // Prevent input value from updating on focus/hover
+                            },
+                            // Override to prevent input value from changing during typing
+                            change: function (event, ui) {
+                                // Allow the user’s typed value to remain unless a selection is made
+                                return false;
+                            }
+                        });
+                    },
+                    error: function (xhr, status, error) {
+                        console.error("Error loading the Example Movies:", error);
+                    }
+                });
+            }
+
             loadMovies('', currentPage, currentPageSize);
             loadAddMovie();
+            loadExampleMovie();
         });
     </script>
 }

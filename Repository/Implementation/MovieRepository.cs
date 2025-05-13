@@ -36,4 +36,12 @@ public class MovieRepository : IMovieRepository
     {
         return await _context.Movies.FirstOrDefaultAsync(m => m.Id == id);
     }
+
+    public async Task<List<Movie>> GetMoviesByPartialNameAsync(string partialName, int limit)
+    {
+        return await _context.Movies
+            .Where(m => EF.Functions.Like(m.Name.ToLower(), $"{partialName.ToLower()}%"))
+            .Take(limit)
+            .ToListAsync();
+    }
 }

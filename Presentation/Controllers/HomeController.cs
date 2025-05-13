@@ -37,6 +37,44 @@ public class HomeController : Controller
         return PartialView("_AddMoviePartialView");
     }
 
+    [HttpGet]
+    public async Task<IActionResult> GetMovieSuggestions(string term)
+    {
+        var movies = await _movieService.GetMoviesByPartialNameAsync(term, 10);
+        return Json(movies.Select(m => new
+        {
+            Id = m.Id, // Add Id
+            Name = m.Name,
+            ReleaseYear = m.ReleaseYear,
+            ImdbRating = m.ImdbRating,
+            BoxOfficeCollection = m.BoxOfficeCollection
+        }));
+    }
+
+    [HttpGet]
+    public async Task<IActionResult> GetMovieById(int id)
+    {
+        var movie = await _movieService.GetMoviesById(id);
+        if (movie == null)
+        {
+            return NotFound();
+        }
+        return Json(new
+        {
+            Id = movie.Id,
+            Name = movie.Name,
+            ReleaseYear = movie.ReleaseYear,
+            ImdbRating = movie.ImdbRating,
+            BoxOfficeCollection = movie.BoxOfficeCollection
+        });
+    }
+
+    [HttpGet]
+    public IActionResult Example()
+    {
+        return PartialView("_ExampleMoviePartialView");
+    }
+
     [HttpPost]
     public async Task<IActionResult> AddNewMovie(CrudMovieViewModel model)
     {

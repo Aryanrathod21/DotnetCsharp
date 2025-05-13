@@ -17,4 +17,6 @@ public interface IMovieService
 
     Task<(bool Success, string Message)> SoftDeleteMovieAsync(int id);
 
+    Task<List<CrudMovieViewModel>> GetMoviesByPartialNameAsync(string partialName, int limit);
+
 }

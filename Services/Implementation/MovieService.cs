@@ -152,6 +152,17 @@ public class MovieService : IMovieService
         return await _movieRepository.GetMovieById(id);
     }
 
-
+    public async Task<List<CrudMovieViewModel>> GetMoviesByPartialNameAsync(string partialName, int limit)
+    {
+        var movies = await _movieRepository.GetMoviesByPartialNameAsync(partialName, limit);
+        return movies.Select(m => new CrudMovieViewModel
+        {
+            Id = m.Id, // Add Id
+            Name = m.Name,
+            ReleaseYear = m.ReleaseYear,
+            ImdbRating = m.ImdbRating,
+            BoxOfficeCollection = m.BoxOfficeCollection
+        }).ToList();
+    }
 
 }
