@@ -347,8 +347,8 @@
                                     success: function (data) {
                                         response($.map(data, function (item) {
                                             return {
-                                                label: item.name, // Displayed in the suggestion list
-                                                value: item.name, // Value to use (will override later)
+                                                label: item.name,
+                                                value: item.name,
                                                 id: item.id,
                                                 releaseYear: item.releaseYear,
                                                 imdbRating: item.imdbRating,
@@ -363,7 +363,6 @@
                             },
                             minLength: 2,
                             select: function (event, ui) {
-                                // Populate form fields only when a suggestion is explicitly selected
                                 $.ajax({
                                     url: '@Url.Action("GetMovieById", "Home")',
                                     type: "GET",
@@ -380,24 +379,21 @@
                                         toastr.error("Failed to load movie data.");
                                     }
                                 });
-                                return false; // Prevent default behavior of setting input value
+                                return false;
                             },
                             appendTo: "#SuggetionsMovie",
                             open: function () {
                                 var menu = $(this).data("ui-autocomplete").menu.element;
                                 menu.position({
-                                    my: "left top",       // Align the top-left of the suggestion list
-                                    at: "left top",       // To the top-left of the target element
-                                    of: "#SuggetionsMovie" // Target element is the suggestions div
+                                    my: "left top",
+                                    at: "left top",
+                                    of: "#SuggetionsMovie"
                                 });
                             },
-                            // Override to prevent input value from changing during suggestion navigation
                             focus: function (event, ui) {
-                                return false; // Prevent input value from updating on focus/hover
+                                return false;
                             },
-                            // Override to prevent input value from changing during typing
                             change: function (event, ui) {
-                                // Allow the user’s typed value to remain unless a selection is made
                                 return false;
                             }
                         });
