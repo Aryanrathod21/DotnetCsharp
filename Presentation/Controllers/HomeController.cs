@@ -27,7 +27,8 @@ public class HomeController : Controller
 
     public async Task<IActionResult> MovieList(string searchString = " ", int page = 1, int pageSize = 5)
     {
-        var paginatedMovies = await _movieService.GetAllMovies(searchString, page, pageSize);
+
+        PaginatedListViewModel<Movie> paginatedMovies = await _movieService.GetAllMovies(searchString, page, pageSize);
         return PartialView("_MovieListPartialView", paginatedMovies);
     }
 
@@ -40,10 +41,10 @@ public class HomeController : Controller
     [HttpGet]
     public async Task<IActionResult> GetMovieSuggestions(string term)
     {
-        var movies = await _movieService.GetMoviesByPartialNameAsync(term, 10);
+        List<CrudMovieViewModel> movies = await _movieService.GetMoviesByPartialNameAsync(term, 10);
         return Json(movies.Select(m => new
         {
-            Id = m.Id, // Add Id
+            Id = m.Id,
             Name = m.Name,
             ReleaseYear = m.ReleaseYear,
             ImdbRating = m.ImdbRating,
@@ -54,7 +55,7 @@ public class HomeController : Controller
     [HttpGet]
     public async Task<IActionResult> GetMovieById(int id)
     {
-        var movie = await _movieService.GetMoviesById(id);
+        Movie? movie = await _movieService.GetMoviesById(id);
         if (movie == null)
         {
             return NotFound();
@@ -80,7 +81,7 @@ public class HomeController : Controller
     {
         if (!ModelState.IsValid)
         {
-            var errors = ModelState.Values
+            string[] errors = ModelState.Values
                                    .SelectMany(v => v.Errors)
                                    .Select(e => e.ErrorMessage)
                                    .ToArray();
@@ -101,7 +102,7 @@ public class HomeController : Controller
     [HttpGet]
     public async Task<IActionResult> EditMovie(int id)
     {
-        var model = await _movieService.GetMovieForEdit(id);
+        CrudMovieViewModel? model = await _movieService.GetMovieForEdit(id);
         if (model == null)
         {
             return NotFound("Movie Not Found");
@@ -114,7 +115,7 @@ public class HomeController : Controller
     {
         if (!ModelState.IsValid)
         {
-            var errors = ModelState.Values
+            string[] errors = ModelState.Values
                                    .SelectMany(v => v.Errors)
                                    .Select(e => e.ErrorMessage)
                                    .ToArray();

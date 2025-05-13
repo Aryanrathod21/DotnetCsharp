@@ -16,21 +16,21 @@ public class MovieService : IMovieService
 
     public async Task<(bool Success, string Message)> AddMovieAsync(CrudMovieViewModel model)
     {
-        var originalname = model.Name?.Trim();
+        string? originalname = model.Name?.Trim();
         if (string.IsNullOrEmpty(originalname))
         {
             return (false, "Movie name cannot be empty.");
         }
 
-        var normalizedname = originalname.ToLowerInvariant();
+        string normalizedname = originalname.ToLowerInvariant();
 
-        var existingmovie = await _movieRepository.GetAllMovies();
+        List<Movie> existingmovie = await _movieRepository.GetAllMovies();
         if (existingmovie.Any(m => m.Name?.ToLowerInvariant() == normalizedname))
         {
             return (false, "Movie Already Exists.");
         }
 
-        var movie = new Movie
+        Movie movie = new Movie
         {
             Name = model.Name,
             ReleaseYear = model.ReleaseYear,
@@ -52,7 +52,7 @@ public class MovieService : IMovieService
     public async Task<PaginatedListViewModel<Movie>> GetAllMovies(string searchString, int page, int pageSize)
     {
         // return await _movieRepository.GetAllMovies();
-        var movies = await _movieRepository.GetAllMovies();
+        List<Movie> movies = await _movieRepository.GetAllMovies();
 
         if (!string.IsNullOrWhiteSpace(searchString))
         {
@@ -62,7 +62,7 @@ public class MovieService : IMovieService
         int totalItems = movies.Count;
         int totalPages = (int)Math.Ceiling((double)totalItems / pageSize);
 
-        var paginatedTables = movies
+        List<Movie> paginatedTables = movies
             .Skip((page - 1) * pageSize)
             .Take(pageSize)
             .ToList();
@@ -80,7 +80,7 @@ public class MovieService : IMovieService
 
     public async Task<CrudMovieViewModel?> GetMovieForEdit(int id)
     {
-        var movie = await _movieRepository.GetMovieById(id);
+        Movie? movie = await _movieRepository.GetMovieById(id);
         if (movie == null)
         {
             return null;
@@ -97,20 +97,20 @@ public class MovieService : IMovieService
 
     public async Task<(bool Success, string Message)> EditMovieAsync(CrudMovieViewModel model)
     {
-        var originalname = model.Name?.Trim();
+        string? originalname = model.Name?.Trim();
         if (string.IsNullOrEmpty(originalname))
         {
             return (false, "Movie name cannot be empty.");
         }
 
-        var normalizedname = originalname.Trim().ToLowerInvariant();
-        var existingmovie = await _movieRepository.GetAllMovies();
+        string normalizedname = originalname.Trim().ToLowerInvariant();
+        List<Movie> existingmovie = await _movieRepository.GetAllMovies();
         if (existingmovie.Any(m => m.Name?.Trim().ToLowerInvariant() == normalizedname && m.Id != model.Id))
         {
             return (false, "Movie Already Exists.");
         }
 
-        var movie = await _movieRepository.GetMovieById(model.Id);
+        Movie? movie = await _movieRepository.GetMovieById(model.Id);
         if (movie == null)
         {
             return (false, "Movie Not Found");
@@ -129,14 +129,14 @@ public class MovieService : IMovieService
         }
         catch (Exception ex)
         {
-            return (false, "Failed to Edit Movie");
+            return (false, "Failed to Edit Movie" + ex);
         }
     }
 
 
     public async Task<(bool Success, string Message)> SoftDeleteMovieAsync(int id)
     {
-        var movie = await _movieRepository.GetMovieById(id);
+        Movie? movie = await _movieRepository.GetMovieById(id);
         if (movie == null)
         {
             return (false, "Movie Not Found");
@@ -154,10 +154,10 @@ public class MovieService : IMovieService
 
     public async Task<List<CrudMovieViewModel>> GetMoviesByPartialNameAsync(string partialName, int limit)
     {
-        var movies = await _movieRepository.GetMoviesByPartialNameAsync(partialName, limit);
+        List<Movie> movies = await _movieRepository.GetMoviesByPartialNameAsync(partialName, limit);
         return movies.Select(m => new CrudMovieViewModel
         {
-            Id = m.Id, // Add Id
+            Id = m.Id,
             Name = m.Name,
             ReleaseYear = m.ReleaseYear,
             ImdbRating = m.ImdbRating,

@@ -30,6 +30,7 @@ public partial class ApplicationDbContext : DbContext
 
             entity.Property(e => e.BoxOfficeCollection).HasColumnType("character varying");
             entity.Property(e => e.ImdbRating).HasPrecision(3, 2);
+            entity.Property(e => e.IsDeleted).HasDefaultValueSql("false");
             entity.Property(e => e.Name).HasMaxLength(50);
         });
 
